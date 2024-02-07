@@ -1,3 +1,9 @@
+/*
+Name: Kira Way
+Game Title: Gravity Well
+Creative Tilt: working on it :)
+*/
+
 let config = {
     type: Phaser.AUTO,
     width: 480,
