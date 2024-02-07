@@ -6,15 +6,21 @@ Creative Tilt: working on it :)
 
 let config = {
     type: Phaser.AUTO,
-    width: 480,
-    height: 640,
+    width: 500,
+    height: 800,
+    render: {
+        pixelArt:true,
+    },
     physics:{
         default: 'arcade',
         arcade: {
             debug: true
         }
     },
-    scene: [Menu]
+    scene: [Menu, Play]
 }
 
 let game = new Phaser.Game(config);
+
+//define keys
+let keyLEFT, keyRIGHT
