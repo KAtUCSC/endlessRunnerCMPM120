@@ -18,7 +18,7 @@ class Spaceship extends Phaser.GameObjects.Sprite {
         let yDifference = this.targetY - this.y
         let velocityTarget
         if(this.faltering) {
-            
+            console.log('faltering')            
         } else {
             if(this.y > this.targetY + this.maxSpeed/2) {
                 //console.log(`y over ydiff plus maxspeed`)

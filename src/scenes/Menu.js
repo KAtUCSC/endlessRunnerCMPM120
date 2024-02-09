@@ -5,10 +5,28 @@ class Menu extends Phaser.Scene {
         super("menuScene");
     }
 
-    preload() {}
+    preload() {
+        this.load.spritesheet('spaceship', './assets/spaceship.png', {
+            frameWidth: 16,
+            frameHeight: 32,
+            startFrame: 0,
+            endFrame: 3
+        })
+    }
 
     create() {
         console.log('Menu: create')
+        //animations
+        this.anims.create({
+            key: 'thrust',
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('spaceship', {
+                start: 0,
+                end: 3,
+                first: 0
+            }),
+            frameRate: 20
+        })
 
         //menu text
         let menuText = {
@@ -31,7 +49,8 @@ class Menu extends Phaser.Scene {
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
         this.started = false
 
-        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, './assets/spaceship.png')
+        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, 'spaceship').setScale(2)
+        this.spaceship.anims.play('thrust')
     }
 
     update() {

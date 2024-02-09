@@ -10,6 +10,8 @@ class Play extends Phaser.Scene {
 
     preload() {}
 
+    init() {}
+
     create() {}
 
     update() {}
