@@ -31,7 +31,7 @@ class Menu extends Phaser.Scene {
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
         this.started = false
 
-        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, './assets/Spaceship.png')
+        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, './assets/spaceship.png')
     }
 
     update() {
