@@ -10,7 +10,14 @@ class Menu extends Phaser.Scene {
             frameWidth: 16,
             frameHeight: 32,
             startFrame: 0,
-            endFrame: 3
+            endFrame: 9
+        })
+        
+        this.load.spritesheet('blackhole', './assets/blackhole.png', {
+            frameWidth: 250,
+            frameHeight: 400,
+            startFrame: 0,
+            endFrame: 8
         })
     }
 
@@ -21,12 +28,45 @@ class Menu extends Phaser.Scene {
             key: 'thrust',
             repeat: -1,
             frames: this.anims.generateFrameNumbers('spaceship', {
+                start: 7,
+                end: 9,
+                first: 6
+            }),
+            frameRate: 10
+        })
+        
+        this.anims.create({
+            key: 'falter',
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('spaceship', {
                 start: 0,
-                end: 3,
+                end: 5,
                 first: 0
             }),
-            frameRate: 20
+            frameRate: 10
         })
+        
+        //test
+        this.anims.create({
+            key: 'idle',
+            repeat: -1,
+            frames: this.anims.generateFrameNumbers('blackhole', {
+                start: 0,
+                end: 7,
+                first: 0
+            }),
+            frameRate: 10
+        })
+
+        //keys
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
+        this.started = false
+        
+        //bg
+        this.background = this.add.sprite(0, 0, 'blackhole').setOrigin(0).setScale(2)
+        this.moveMe = this.physics.add.sprite(0, game.config.height*3/8, 'blackhole').setOrigin(0).setScale(2).setImmovable(true)
+        this.moveMe.play('idle')
 
         //menu text
         let menuText = {
@@ -41,20 +81,17 @@ class Menu extends Phaser.Scene {
             },
             fixedWidth: 0            
         }
-        this.add.text(game.config.width/2, game.config.height/2-30, 'GRAVITY WELL IMMINENT', menuText).setOrigin(0.5)
-        this.add.text(game.config.width/2, game.config.height/2+2, 'PRESS ←→ TO BEGIN NAVIGATION', menuText).setOrigin(0.5)
+        this.topText = this.add.text(game.config.width/2, game.config.height/2-90, 'GRAVITY WELL IMMINENT', menuText).setOrigin(0.5)
+        this.bottomText = this.add.text(game.config.width/2, game.config.height/2-60, 'PRESS ←→ TO BEGIN NAVIGATION', menuText).setOrigin(0.5)
 
-        //keys
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
-        this.started = false
-
-        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, 'spaceship').setScale(2)
-        this.spaceship.anims.play('thrust')
+        //spaceship
+        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, 'spaceship').setScale(4)
     }
 
     update() {
-        this.spaceship.update()
+        //console.log(this.spaceship.anims)
+        this.spaceship.update(false)
+        //this.moveMe.body.velocity = this.spaceship.body.velocity
         //console.log(Phaser.Input.Keyboard.JustDown(keyLEFT) || Phaser.Input.Keyboard.JustDown(keyRIGHT))
         let inputs = Phaser.Input.Keyboard.JustDown(keyLEFT) || Phaser.Input.Keyboard.JustDown(keyRIGHT)
         if(inputs && !this.started) {
@@ -64,6 +101,18 @@ class Menu extends Phaser.Scene {
             console.log('starting play scene')
             //this.scene.start('playScene')
             this.startCall = this.time.delayedCall(3000, () => {this.scene.start('playScene')}, null, this)
+        }
+        if(this.startCall) {
+            //scale ship
+            this.spaceship.setScale(2+2*(-this.startCall.getProgress()+1)**3)
+            
+            //move black hole
+            //console.log((-this.startCall.getProgress()+1)**3)
+            this.moveMe.y = Math.min(game.config.height*3/8, game.config.height*3/8 * (-this.startCall.getProgress()+1)**3)
+
+            //fade text
+            this.topText.alpha = 1-2*this.startCall.getProgress()
+            this.bottomText.alpha = 1-2*this.startCall.getProgress()
         }
     }
 }
