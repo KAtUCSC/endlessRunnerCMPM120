@@ -22,7 +22,7 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         
         //physics stuff
         this.body.setCollideWorldBounds(true)
-        this.body.setSize(this.width/3, this.height/2).setOffset(this.width/3,this.height/16).setBounce(0.7)
+        this.body.setSize(this.width/3, this.height/2).setOffset(this.width/3,this.height*3/32).setBounce(0.7)
         
         /*
         adapted from samme from the phaser form's work while answering someone's multi body question
@@ -32,7 +32,9 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         //nose cone hitbox
         console.log('creating nose cone')
         this.noseCone = scene.physics.add.sprite(this.x, this.y, texture)
-        this.noseCone.body.setCircle(this.width/6, this.width/3, 0)
+        this.noseCone.body.setCollideWorldBounds(true)
+        this.noseCone.body.setCircle(this.width/6, this.width/3, 0).setBounce(0.7)
+        this.noseCone.setAlpha(0)
         console.log(this.noseCone)
 
         console.log(`ship added, target y is ${this.targetY}`)

@@ -1,8 +1,6 @@
 //asteroid fall, can hit ship
 //ship falters every hit
 
-//
-
 class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
@@ -34,11 +32,12 @@ class Play extends Phaser.Scene {
         console.log(this.asteroidGroup)
         this.physics.add.collider([this.spaceship, this.spaceship.noseCone], this.asteroidGroup, this.handleCollision)
         //testing
+        this.testFunction()
     }
 
     update() {
         this.spaceship.update(true)
-        this.addAsteroid(1, 1, 100)
+        //this.addAsteroid(1, 1, 100)
         //this.addAsteroid(2, 1, 100)
         //this.addAsteroid(3, 1, 100)
     }
@@ -47,6 +46,7 @@ class Play extends Phaser.Scene {
     addAsteroid(astSize, stun, initialVelocity) {
         let asteroid = new Asteroid(this, astSize, stun, initialVelocity)
         this.asteroidGroup.add(asteroid)
+        //console.log(this)
     }
 
     /*
@@ -56,10 +56,17 @@ class Play extends Phaser.Scene {
     handleCollision(shipPart, asteroid) {
         //console.log(shipPart)
         let shipVelocity = shipPart.body.velocity
-        console.log(shipVelocity)
-        //console.log()
-        //this.spaceship.body.velocity.copy(shipVelocity)
-        //this.spaceship.noseCone.body.velocity.copy(shipVelocity)
+        let scene = shipPart.scene
+        //console.log(scene)
+        scene.spaceship.body.velocity.copy(shipVelocity)
+        scene.spaceship.noseCone.body.velocity.copy(shipVelocity)
         
+    }
+
+    testFunction() {
+        this.testing = this.time.delayedCall(1000, () => {
+            this.addAsteroid(1, 1, 100)
+            this.testFunction()
+        })
     }
 }
