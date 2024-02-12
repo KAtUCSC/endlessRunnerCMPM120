@@ -34,8 +34,8 @@ class Play extends Phaser.Scene {
     update() {
         this.spaceship.update(true)
         this.addAsteroid(1, 1, 100)
-        this.addAsteroid(2, 1, 100)
-        this.addAsteroid(3, 1, 100)
+        //this.addAsteroid(2, 1, 100)
+        //this.addAsteroid(3, 1, 100)
     }
 
     //add asteroid to asteroid group

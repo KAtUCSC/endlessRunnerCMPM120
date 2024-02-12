@@ -18,6 +18,7 @@ class Asteroid extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         //asteroid params
+        this.body.setCircle(this.width/2, 0, 0)
         this.stun = stun
         this.body.setVelocityY(initialVelocity)
         console.log('asteroid made')
