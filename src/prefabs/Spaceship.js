@@ -23,8 +23,20 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         //physics stuff
         this.body.setCollideWorldBounds(true)
         this.body.setSize(this.width/3, this.height/2).setOffset(this.width/3,this.height/16).setBounce(0.7)
+        
+        /*
+        adapted from samme from the phaser form's work while answering someone's multi body question
+        https://phaser.discourse.group/t/arcade-physics-create-one-sprite-with-multiple-collision-bodies-compounded-sprite/3773
+        */
+
+        //nose cone hitbox
+        console.log('creating nose cone')
+        this.noseCone = scene.physics.add.sprite(this.x, this.y, texture)
+        this.noseCone.body.setCircle(this.width/6, this.width/3, 0)
+        console.log(this.noseCone)
 
         console.log(`ship added, target y is ${this.targetY}`)
+        console.log(this)
     }
 
     update(xControlValue) {
@@ -54,6 +66,9 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         let velocityTargetX = xControlValue*this.maxSpeedX*(-keyLEFT.isDown+keyRIGHT.isDown)
         let velocityChangeX = Math.min(this.accelerationX, Math.max(-this.accelerationX, velocityTargetX - this.body.velocity.x))
         this.body.setVelocityX(this.body.velocity.x + velocityChangeX)
+        
+        //link nose cone to ship velo
+        this.noseCone.body.velocity.copy(this.body.velocity)
     }
 
     setMaxSpeed(numValue) {
@@ -69,6 +84,11 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
     setTargetY(yValue) {
         console.log(`setting target y to ${yValue}`)
         this.targetY = yValue
+    }
+
+    shipScale(number) {
+        this.setScale(number)
+        this.noseCone.setScale(number)
     }
 
     //thinking

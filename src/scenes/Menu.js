@@ -94,7 +94,8 @@ class Menu extends Phaser.Scene {
         this.bottomText = this.add.text(game.config.width/2, game.config.height/2-60, 'PRESS ←→ TO BEGIN NAVIGATION', menuText).setOrigin(0.5)
 
         //spaceship
-        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, 'spaceship').setScale(4)
+        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, 'spaceship')
+        this.spaceship.shipScale(4)
         
         //testing
     }
@@ -115,7 +116,7 @@ class Menu extends Phaser.Scene {
         }
         if(this.startCall) {
             //scale ship
-            this.spaceship.setScale(2+2*(-this.startCall.getProgress()+1)**3)
+            this.spaceship.shipScale(2+2*(-this.startCall.getProgress()+1)**3)
             
             //move black hole
             //console.log((-this.startCall.getProgress()+1)**3)

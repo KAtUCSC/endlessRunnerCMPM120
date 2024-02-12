@@ -22,12 +22,17 @@ class Play extends Phaser.Scene {
         this.background.play('idle')
 
         //ship
-        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*4/8, 'spaceship').setScale(2)
-        
+        this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*4/8, 'spaceship')
+        this.spaceship.shipScale(2)
+
+        /*
+        adapted from samme from the phaser form's work while answering someone's multi body question
+        https://phaser.discourse.group/t/arcade-physics-create-one-sprite-with-multiple-collision-bodies-compounded-sprite/3773
+        */
         //asteroids
         this.asteroidGroup = this.add.group()
         console.log(this.asteroidGroup)
-        this.physics.add.collider(this.spaceship, this.asteroidGroup)
+        this.physics.add.collider([this.spaceship, this.spaceship.noseCone], this.asteroidGroup, this.handleCollision)
         //testing
     }
 
@@ -42,5 +47,19 @@ class Play extends Phaser.Scene {
     addAsteroid(astSize, stun, initialVelocity) {
         let asteroid = new Asteroid(this, astSize, stun, initialVelocity)
         this.asteroidGroup.add(asteroid)
+    }
+
+    /*
+    adapted from samme from the phaser form's work while answering someone's multi body question
+    https://phaser.discourse.group/t/arcade-physics-create-one-sprite-with-multiple-collision-bodies-compounded-sprite/3773
+    */
+    handleCollision(shipPart, asteroid) {
+        //console.log(shipPart)
+        let shipVelocity = shipPart.body.velocity
+        console.log(shipVelocity)
+        //console.log()
+        //this.spaceship.body.velocity.copy(shipVelocity)
+        //this.spaceship.noseCone.body.velocity.copy(shipVelocity)
+        
     }
 }
