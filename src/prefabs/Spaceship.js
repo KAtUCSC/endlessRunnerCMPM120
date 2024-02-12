@@ -17,7 +17,8 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         this.faltering = false
         
         //physics stuff
-        this.body.setCollideWorldBounds(false)
+        this.body.setCollideWorldBounds(true)
+        this.body.setSize(this.width/3, this.height/2).setOffset(this.width/3,this.height/16).setBounce(0.7)
 
         console.log(`ship added, target y is ${this.targetY}`)
     }
@@ -29,35 +30,26 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         let velocityTarget
         if(this.faltering) {
             console.log('faltering')
+            //console.log(this.scene)
         } else {
             this.play('thrust', true)
             if(this.y > this.targetY + this.maxSpeed/2) {
-                //console.log(`y over ydiff plus maxspeed`)
                 velocityTarget = -this.maxSpeed
             } else {
-                //console.log(`y below ydiff plus maxspeed`)
                 velocityTarget = Math.max(yDifference * 2)
             }
             //set velocity
-            //console.log(`y difference: ${yDifference}, ${velocityTarget}`)
-            //console.log(this.body.velocity.y - this.acceleration, velocityTarget)
             let finalVelocity = Math.max(this.body.velocity.y - this.acceleration, velocityTarget)
             this.body.setVelocityY(finalVelocity)
         }
         //else, go to target y
 
         //x control
-        //console.log(this.body.velocity.x)
         //(-keyLEFT.isDown+keyRIGHT.isDown) controls direction, either 1, 0, or -1
         //xControlValue*this.maxSpeed*(-keyLEFT.isDown+keyRIGHT.isDown) is the target velocity
         let velocityTargetX = xControlValue*this.maxSpeedX*(-keyLEFT.isDown+keyRIGHT.isDown)
         let velocityChangeX = Math.min(this.accelerationX, Math.max(-this.accelerationX, velocityTargetX - this.body.velocity.x))
-        //console.log(velocityChangeX)
-        //let finalVelocityX = 0
         this.body.setVelocityX(this.body.velocity.x + velocityChangeX)
-        //this.body.acceleration.x = xControlValue*this.accelerationX*(-keyLEFT.isDown+keyRIGHT.isDown)*30
-        //this.body.setVelocityX(Math.max(-this.maxSpeedX, Math.min(this.maxSpeedX, this.body.velocity.x)))
-        //console.log(Math.max(-this.maxSpeedX, Math.min(this.maxSpeedX, this.body.velocity.x)))
     }
 
     setMaxSpeed(numValue) {
@@ -74,4 +66,18 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         console.log(`setting target y to ${yValue}`)
         this.targetY = yValue
     }
+
+    //thinking
+    /*
+    timer is by default paused and duration + elapsed zeroed
+    hit function will unpause the timer, add to the duration, and set faltering
+    if elapsed >= duration, pause and zero, set not faltering
+    which animation plays depends on duration - elapsed = stun time remaining
+    
+    2 stages of falter: falling and recovering
+    falling: thrusters short or are out, starts accelerating down
+    recovering: thrusters are turning back on, accelerates towards a y stop
+
+    lose x control for half a second after being hit
+    */
 }

@@ -86,6 +86,8 @@ class Menu extends Phaser.Scene {
 
         //spaceship
         this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, 'spaceship').setScale(4)
+        
+        //testing
     }
 
     update() {
