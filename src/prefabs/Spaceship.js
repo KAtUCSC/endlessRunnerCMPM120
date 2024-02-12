@@ -14,7 +14,11 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         this.maxSpeedX = 600
         this.accelerationX = 30
 
+        //faltering setup
         this.faltering = false
+        this.falterTimer = scene.time.addEvent({delay: 0, repeat: 0})
+        this.falterTimer.paused = true
+        console.log(this.falterTimer)
         
         //physics stuff
         this.body.setCollideWorldBounds(true)

@@ -6,14 +6,23 @@ class Menu extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('spaceship', './assets/spaceship.png', {
+        this.load.path = './assets/'
+        for (let astSize = 1; astSize <= 3; astSize++) {
+            console.log(`loading asteroid size ${astSize} variants`)
+            for (let astVar = 1; astVar <= 3; astVar++) {
+                console.log(`loading asteroid ${astSize} ${astVar}`)
+                this.load.image(`asteroid${astSize}-${astVar}`, `asteroid${astSize}-${astVar}.png`)
+            }
+        }
+
+        this.load.spritesheet('spaceship', 'spaceship.png', {
             frameWidth: 16,
             frameHeight: 32,
             startFrame: 0,
             endFrame: 9
         })
         
-        this.load.spritesheet('blackhole', './assets/blackhole.png', {
+        this.load.spritesheet('blackhole', 'blackhole.png', {
             frameWidth: 250,
             frameHeight: 400,
             startFrame: 0,

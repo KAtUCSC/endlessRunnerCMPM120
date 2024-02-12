@@ -23,9 +23,24 @@ class Play extends Phaser.Scene {
 
         //ship
         this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*4/8, 'spaceship').setScale(2)
+        
+        //asteroids
+        this.asteroidGroup = this.add.group()
+        console.log(this.asteroidGroup)
+        this.physics.add.collider(this.spaceship, this.asteroidGroup)
+        //testing
     }
 
     update() {
         this.spaceship.update(true)
+        this.addAsteroid(1, 1, 100)
+        this.addAsteroid(2, 1, 100)
+        this.addAsteroid(3, 1, 100)
+    }
+
+    //add asteroid to asteroid group
+    addAsteroid(astSize, stun, initialVelocity) {
+        let asteroid = new Asteroid(this, astSize, stun, initialVelocity)
+        this.asteroidGroup.add(asteroid)
     }
 }
