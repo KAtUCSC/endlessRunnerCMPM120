@@ -42,6 +42,8 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
     }
 
     update(xControlValue) {
+        this.noseCone.body.velocity.copy(this.body.velocity)
+        this.body.velocity.copy(this.noseCone.body.velocity)
         //either faltering or going
         //if faltering, flash thruster and fall backwards
         let yDifference = this.targetY - this.y
@@ -71,6 +73,7 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         
         //link nose cone to ship velo
         this.noseCone.body.velocity.copy(this.body.velocity)
+        this.body.velocity.copy(this.noseCone.body.velocity)
     }
 
     setMaxSpeed(numValue) {
