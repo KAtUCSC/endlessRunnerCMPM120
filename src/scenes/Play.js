@@ -60,7 +60,7 @@ class Play extends Phaser.Scene {
         //boost asteroid away to avoid multi hits
         //get if the asteroid is on the left or right of the thing it hit, redirect it that way and give it a boost
         let bounceDir = (asteroid.x > shipPart.x) ? 1 : -1;
-        asteroid.body.setVelocityX(bounceDir * (Math.abs(asteroid.body.velocity.x) + 10))
+        asteroid.body.setVelocityX(bounceDir * (Math.abs(asteroid.body.velocity.x) + 50))
         //change velocity to down for funsies
         asteroid.body.setVelocityY(Math.abs(asteroid.body.velocity.y))
 
@@ -72,6 +72,9 @@ class Play extends Phaser.Scene {
 
         //falter
         this.spaceship.falter(asteroid.stun)
+        //console.log(asteroid.size * asteroid.stun * 10, this.spaceship.body.velocity.y)
+        this.spaceship.body.setVelocityY(Math.max(asteroid.size * asteroid.stun * 10, this.spaceship.body.velocity.y))
+        //console.log(this.spaceship.body.velocity.y)
     }
 
     testFunction() {

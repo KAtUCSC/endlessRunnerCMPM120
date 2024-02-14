@@ -27,7 +27,7 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         
         //physics stuff
         this.bounceFactor = 0.4
-        this.bounceFactorY = 0.15
+        this.bounceFactorY = 0.0
         this.body.setCollideWorldBounds(true, 0.7, 0.7)
         this.body.setSize(this.width/3, this.height/2).setOffset(this.width/3,this.height/8).setBounce(this.bounceFactor, this.bounceFactorY)
         

@@ -18,6 +18,7 @@ class Asteroid extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
 
         //asteroid params
+        this.size = astSize
         this.body.setCircle(this.width/2, 0, 0).setBounce(1.5, 0.5)
         this.stun = stun
         this.body.setVelocity(initialVelocityX, initialVelocityY)
