@@ -125,9 +125,7 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
     }
 
     doneFaltering() {
-        console.log('done faltering')
-        //console.log(this.falterTimer)
-        //console.log(this)
+        //console.log('done faltering')
         this.falterTimer.paused = true
         this.falterTimer.hasDispatched = false
     }
