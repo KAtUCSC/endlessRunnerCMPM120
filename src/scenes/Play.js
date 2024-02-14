@@ -169,7 +169,7 @@ class Play extends Phaser.Scene {
 
     fastAsteroidLoop() {
         this.time.delayedCall(Phaser.Math.Between(0, this.fastAstLoopTime), () => {
-            let asteroidSize = Phaser.Math.Between(1, 2)
+            let asteroidSize = 1 //Phaser.Math.Between(1, 2)
             this.addAsteroidRandom(asteroidSize, asteroidSize * 2, 800)
         })
         if(this.fastAstLoopTime > 1500) {
