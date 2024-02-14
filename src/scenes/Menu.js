@@ -8,9 +8,9 @@ class Menu extends Phaser.Scene {
     preload() {
         this.load.path = './assets/'
         for (let astSize = 1; astSize <= 3; astSize++) {
-            console.log(`loading asteroid size ${astSize} variants`)
+            //console.log(`loading asteroid size ${astSize} variants`)
             for (let astVar = 1; astVar <= 3; astVar++) {
-                console.log(`loading asteroid ${astSize} ${astVar}`)
+                //console.log(`loading asteroid ${astSize} ${astVar}`)
                 this.load.image(`asteroid${astSize}-${astVar}`, `asteroid${astSize}-${astVar}.png`)
             }
         }
@@ -22,16 +22,11 @@ class Menu extends Phaser.Scene {
             endFrame: 9
         })
         
-        this.load.spritesheet('blackhole', 'blackhole.png', {
-            frameWidth: 250,
-            frameHeight: 400,
-            startFrame: 0,
-            endFrame: 8
-        })
+        this.load.atlas('blackhole', 'blackhole.png', 'blackhole.json')
     }
 
     create() {
-        console.log('Menu: create')
+        //console.log('Menu: create')
         //animations
         this.anims.create({
             key: 'thrust',
@@ -68,10 +63,10 @@ class Menu extends Phaser.Scene {
         this.anims.create({
             key: 'idle',
             repeat: -1,
-            frames: this.anims.generateFrameNumbers('blackhole', {
-                start: 0,
-                end: 7,
-                first: 0
+            frames: this.anims.generateFrameNames('blackhole', {
+                prefix: "sprite",
+                start: 1,
+                end: 8
             }),
             frameRate: 10
         })
@@ -119,7 +114,7 @@ class Menu extends Phaser.Scene {
             this.started = true
             this.spaceship.setTargetY(game.config.height/2)
             //remove/fade out text, have ship move from near bottom to screen center
-            console.log('starting play scene')
+            //console.log('starting play scene')
             //this.scene.start('playScene')
             this.startCall = this.time.delayedCall(3000, () => {this.scene.start('playScene')}, null, this)
         }

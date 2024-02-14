@@ -107,7 +107,7 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
 
     //sets the y value the ship tries to go to
     setTargetY(yValue) {
-        console.log(`setting target y to ${yValue}`)
+        //console.log(`setting target y to ${yValue}`)
         this.targetY = yValue
     }
 

@@ -23,6 +23,30 @@ class Play extends Phaser.Scene {
         this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*4/8, 'spaceship')
         this.spaceship.shipScale(2)
 
+        //death collider
+        let deathZoneSize = game.config.width * 3/2
+        this.deathZone = this.physics.add.sprite(game.config.width/2, game.config.height + deathZoneSize/3, 'spaceship')
+        this.deathZone.body.setCircle(deathZoneSize, -deathZoneSize, -deathZoneSize*3/7)
+        this.deathZone.setImmovable(true)
+
+        //score stuff and timer
+        this.scoreTimer = this.time
+        let menuText = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            //backgroundColor: '#F3B141',
+            color: '#ffffff',
+            align: 'center',
+            padding: {
+              top: 5,
+              bottom: 5,
+            },
+            fixedWidth: 0
+        }
+        this.secondsPlaying = 0
+        this.scoreText = this.add.text(game.config.width/2, game.config.height*1/30, this.secondsPlaying, menuText).setOrigin(0.5)
+        this.time.delayedCall(1000, this.updateTimer, null, this)
+
         /*
         adapted from samme from the phaser form's work while answering someone's multi body question
         https://phaser.discourse.group/t/arcade-physics-create-one-sprite-with-multiple-collision-bodies-compounded-sprite/3773
@@ -31,25 +55,26 @@ class Play extends Phaser.Scene {
         this.asteroidGroup = this.add.group({
             runChildUpdate: true
         })
-        console.log(this.asteroidGroup)
-        this.physics.add.collider([this.spaceship, this.spaceship.noseCone], this.asteroidGroup, this.handleCollision, null, this)
+        //console.log(this.asteroidGroup)
+
+        //colliders
+        this.asteroidCollider = this.physics.add.collider([this.spaceship, this.spaceship.noseCone], this.asteroidGroup, this.handleCollision, null, this)
+        this.deathCollider = this.physics.add.overlap(this.spaceship, this.deathZone, this.handleDeath, null, this)
+
+        //start asteroids
+        this.time.delayedCall(3000, this.startObstacles, null, this)
+
         //testing
-        this.testFunction()
-        this.testFunction()
     }
 
     update() {
         this.spaceship.update(true)
-        //this.addAsteroid(1, 1, 100)
-        //this.addAsteroid(2, 1, 100)
-        //this.addAsteroid(3, 1, 100)
     }
 
-    //add asteroid to asteroid group
-    addAsteroidRandom(astSize, stun, initialVelocityY) {
-        let asteroid = new Asteroid(this, Phaser.Math.Between(-32, game.config.width + 32), astSize, stun, initialVelocityY, Phaser.Math.Between(-20, 20)).setScale(2)
-        this.asteroidGroup.add(asteroid)
-        //console.log(this)
+    updateTimer() {
+        this.secondsPlaying += 1
+        this.scoreText.text = this.secondsPlaying
+        this.time.delayedCall(1000, this.updateTimer, null, this)
     }
 
     /*
@@ -64,7 +89,6 @@ class Play extends Phaser.Scene {
         //change velocity to down for funsies
         asteroid.body.setVelocityY(Math.abs(asteroid.body.velocity.y))
 
-        //console.log(shipPart)
         //sync velocity changes
         let shipVelocity = shipPart.body.velocity
         this.spaceship.body.velocity.copy(shipVelocity)
@@ -72,18 +96,95 @@ class Play extends Phaser.Scene {
 
         //falter
         this.spaceship.falter(asteroid.stun)
-        //console.log(asteroid.size * asteroid.stun * 10, this.spaceship.body.velocity.y)
         this.spaceship.body.setVelocityY(Math.max(asteroid.size * asteroid.stun * 10, this.spaceship.body.velocity.y))
-        //console.log(this.spaceship.body.velocity.y)
     }
 
-    testFunction() {
-        this.time.delayedCall(350, () => {
-            this.time.delayedCall(Phaser.Math.Between(0, 350), () => {
-                let asteroidSize = Phaser.Math.Between(1, 3)
-                this.addAsteroidRandom(asteroidSize, asteroidSize, 100)
-            })
-            this.testFunction()
+    handleDeath(ship, deathZone) {
+        console.log('dead')
+        this.physics.world.removeCollider(this.asteroidCollider)
+    }
+
+    startObstacles() {
+        this.randAstLoopTime = 3000
+        this.randomAsteroidLoop()
+        this.rowAstLoopTime = 5000
+        this.time.delayedCall(10000, this.rowAsteroidLoop, null, this)
+        this.fastAstLoopTime = 5000
+        this.time.delayedCall(20000, this.fastAsteroidLoop, null, this)
+        this.showerAstLoopTime = 10000
+        this.time.delayedCall(30000, this.showerAsteroidLoop, null, this)
+    }
+
+    //add asteroid to asteroid group
+    addAsteroidRandom(astSize, stun, initialVelocityY) {
+        let asteroid = new Asteroid(this, Phaser.Math.Between(-32, game.config.width + 32), astSize, stun, initialVelocityY, Phaser.Math.Between(-20, 20)).setScale(2)
+        this.asteroidGroup.add(asteroid)
+        //console.log(this)
+    }
+
+    addAsteroidRow(count, astSize, stun, initialVelocityY) {
+        let maxRightSpawnPos = game.config.width - (count - 1) * 48 * (astSize)
+        let startX = Phaser.Math.Between(0, maxRightSpawnPos)
+        for(let i = 0; i < count; i++) {
+            let asteroid = new Asteroid (this, startX + 48 * astSize * i, astSize, stun, initialVelocityY, Phaser.Math.Between(-20, 20)).setScale(2)
+            this.asteroidGroup.add(asteroid)
+        }
+
+    }
+
+    addAsteroidShower(count, astSize, stun, initialVelocityY) {
+        let spawnX = Phaser.Math.Between(0, game.config.width)
+        for(let i = 0; i < count; i++) {
+            this.time.delayedCall(i*100, () => {
+                let asteroid = new Asteroid (this, spawnX, astSize, stun, initialVelocityY, Phaser.Math.Between(-20, 20)).setScale(2)
+                this.asteroidGroup.add(asteroid)
+            }, null, this)
+        }
+    }
+
+    randomAsteroidLoop() {
+        this.time.delayedCall(Phaser.Math.Between(0, this.randAstLoopTime), () => {
+            let asteroidSize = Phaser.Math.Between(1, 3)
+            this.addAsteroidRandom(asteroidSize, asteroidSize, 100)
         })
+        if(this.randAstLoopTime > 250) {
+            this.randAstLoopTime -= 250
+        }
+        this.time.delayedCall(this.randAstLoopTime, this.randomAsteroidLoop, null, this)
+    }
+
+    rowAsteroidLoop() {
+        this.time.delayedCall(Phaser.Math.Between(0, this.rowAstLoopTime), () => {
+            let asteroidSize = Phaser.Math.Between(1, 3)
+            let asteroidCount = 4 - asteroidSize
+            this.addAsteroidRow(asteroidCount, asteroidSize, asteroidSize, 100)
+        })
+        if(this.rowAstLoopTime > 1500) {
+            this.rowAstLoopTime -= 250
+        }
+        this.time.delayedCall(this.rowAstLoopTime, this.rowAsteroidLoop, null, this)
+    }
+
+    fastAsteroidLoop() {
+        this.time.delayedCall(Phaser.Math.Between(0, this.fastAstLoopTime), () => {
+            let asteroidSize = Phaser.Math.Between(1, 2)
+            this.addAsteroidRandom(asteroidSize, asteroidSize * 2, 800)
+        })
+        if(this.fastAstLoopTime > 1500) {
+            this.fastAstLoopTime -= 250
+        }
+        this.time.delayedCall(this.fastAstLoopTime, this.fastAsteroidLoop, null, this)
+    }
+
+    showerAsteroidLoop() {
+        this.time.delayedCall(Phaser.Math.Between(0, this.showerAstLoopTime), () => {
+            let asteroidSize = Phaser.Math.Between(1, 1)
+            let asteroidCount = Phaser.Math.Between(4, 6)
+            this.addAsteroidShower(asteroidCount, asteroidSize, asteroidSize, 300)
+        })
+        if(this.showerAstLoopTime > 3000) {
+            this.showerAstLoopTime -= 250
+        }
+        this.time.delayedCall(this.showerAstLoopTime, this.fastAsteroidLoop, null, this)
     }
 }

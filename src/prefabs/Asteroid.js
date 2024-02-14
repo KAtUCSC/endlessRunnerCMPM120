@@ -29,6 +29,8 @@ class Asteroid extends Phaser.Physics.Arcade.Sprite {
     }
 
     update(){
+        this.setScale(2*Math.min(1, 6 * (game.config.height - this.y) / game.config.height))
+        this.setAlpha(Math.min(1, 6 * (game.config.height - this.y) / game.config.height))
         if(this.y > game.config.height + this.height) {
             //console.log('destroying asteroid')
             this.destroy()
