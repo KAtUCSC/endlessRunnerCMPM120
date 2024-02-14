@@ -1,5 +1,5 @@
 class Asteroid extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, astSize, stun, initialVelocity) {
+    constructor(scene, x, astSize, stun, initialVelocityY, initialVelocityX) {
         //thinking
         /*
         size is a number
@@ -11,18 +11,26 @@ class Asteroid extends Phaser.Physics.Arcade.Sprite {
         let astVar = Phaser.Math.Between(1, 3)
         let texture = `asteroid${astSize}-${astVar}`
         //console.log(texture)
-        super(scene, Phaser.Math.Between(0, game.config.width), -32, texture);
+        super(scene, x, -32, texture);
 
         //add object to existing scene
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
         //asteroid params
-        this.body.setCircle(this.width/2, 0, 0).setBounce(0.7)
+        this.body.setCircle(this.width/2, 0, 0).setBounce(1.5, 0.5)
         this.stun = stun
-        this.body.setVelocityY(initialVelocity)
+        this.body.setVelocity(initialVelocityX, initialVelocityY)
         //console.log('asteroid made')
 
-        this.body.setAccelerationY(100)
+        this.body.setAccelerationY(800)
+        this.body.setAccelerationX((game.config.width/2 - this.x) / 3)
+    }
+
+    update(){
+        if(this.y > game.config.height + this.height) {
+            //console.log('destroying asteroid')
+            this.destroy()
+        }
     }
 }

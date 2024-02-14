@@ -10,90 +10,126 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         this.targetY = this.y
         this.maxSpeed = 300
         this.acceleration = 15
+        this.gravPull = 50
         //horizontal params (fixed?)
         this.maxSpeedX = 600
         this.accelerationX = 30
+        this.falterXMultiplier = 1
 
         //faltering setup
-        this.faltering = false
-        this.falterTimer = scene.time.addEvent({delay: 0, repeat: 0})
+        //this.falterTimer = scene.time.addEvent({delay: 0, repeat: 0})
+        this.falterTimer = scene.time.delayedCall(0, this.doneFaltering, null, this)
+        this.falterTimer.repeat = -1
+        this.falterTimer.loop = true
         this.falterTimer.paused = true
-        console.log(this.falterTimer)
+        this.playedFalter = false
+        //console.log(this.falterTimer)
         
         //physics stuff
-        this.body.setCollideWorldBounds(true)
-        this.body.setSize(this.width/3, this.height/2).setOffset(this.width/3,this.height*3/32).setBounce(0.7)
+        this.bounceFactor = 0.4
+        this.bounceFactorY = 0.15
+        this.body.setCollideWorldBounds(true, 0.7, 0.7)
+        this.body.setSize(this.width/3, this.height/2).setOffset(this.width/3,this.height/8).setBounce(this.bounceFactor, this.bounceFactorY)
         
         /*
         adapted from samme from the phaser form's work while answering someone's multi body question
         https://phaser.discourse.group/t/arcade-physics-create-one-sprite-with-multiple-collision-bodies-compounded-sprite/3773
         */
-
         //nose cone hitbox
-        console.log('creating nose cone')
         this.noseCone = scene.physics.add.sprite(this.x, this.y, texture)
-        this.noseCone.body.setCollideWorldBounds(true)
-        this.noseCone.body.setCircle(this.width/6, this.width/3, 0).setBounce(0.7)
+        this.noseCone.body.setCollideWorldBounds(true, 0.7, 0.7)
+        this.noseCone.body.setCircle(this.width/6, this.width/3, 0).setBounce(this.bounceFactor, this.bounceFactorY)
         this.noseCone.setAlpha(0)
-        console.log(this.noseCone)
 
-        console.log(`ship added, target y is ${this.targetY}`)
-        console.log(this)
+        //console.log(`ship added, target y is ${this.targetY}`)
     }
 
     update(xControlValue) {
-        this.noseCone.body.velocity.copy(this.body.velocity)
-        this.body.velocity.copy(this.noseCone.body.velocity)
+        //desync bandaid, works like a charm :skull:
+        this.x = this.noseCone.x
+        this.y = this.noseCone.y
+
         //either faltering or going
         //if faltering, flash thruster and fall backwards
-        let yDifference = this.targetY - this.y
-        let velocityTarget
-        if(this.faltering) {
-            console.log('faltering')
-            //console.log(this.scene)
-        } else {
-            this.play('thrust', true)
-            if(this.y > this.targetY + this.maxSpeed/2) {
-                velocityTarget = -this.maxSpeed
+        //else, go to target y
+        if(this.falterTimer.paused == false) {
+            //console.log('FALTERING', this.falterTimer.elapsed, this.falterTimer.delay)
+            if(this.falterTimer.elapsed >= -400) {
+                this.playedFalter = false
+                this.falterXMultiplier = 1
+                this.play('recover', true)
+                this.setAccelerationY(-this.body.velocity.y)
+                //console.log('sputtering', this.body.acceleration.y)
             } else {
-                velocityTarget = Math.max(yDifference * 2)
+                this.falterXMultiplier = 0.5
+                if(!this.playedFalter) {
+                    this.play('falter', true)
+                    this.playedFalter = true
+                }
+                this.setAccelerationY(this.gravPull)
+                //console.log('recovering', -this.body.velocity.y)
             }
-            //set velocity
+        } else {
+            //animate
+            this.play('thrust', true)
+
+            let yDifference = this.targetY - this.y
+            //set target velocity
+            let velocityTarget = (this.y > this.targetY + this.maxSpeed/2) ? -this.maxSpeed: Math.max(yDifference * 2);
+            
+            //manual acceleration to target velocity, use built in acceleration next time
             let finalVelocity = Math.max(this.body.velocity.y - this.acceleration, velocityTarget)
             this.body.setVelocityY(finalVelocity)
         }
-        //else, go to target y
 
         //x control
         //(-keyLEFT.isDown+keyRIGHT.isDown) controls direction, either 1, 0, or -1
         //xControlValue*this.maxSpeed*(-keyLEFT.isDown+keyRIGHT.isDown) is the target velocity
         let velocityTargetX = xControlValue*this.maxSpeedX*(-keyLEFT.isDown+keyRIGHT.isDown)
-        let velocityChangeX = Math.min(this.accelerationX, Math.max(-this.accelerationX, velocityTargetX - this.body.velocity.x))
+        let velocityChangeX = this.falterXMultiplier * Math.min(this.accelerationX, Math.max(-this.accelerationX, velocityTargetX - this.body.velocity.x))
         this.body.setVelocityX(this.body.velocity.x + velocityChangeX)
         
         //link nose cone to ship velo
         this.noseCone.body.velocity.copy(this.body.velocity)
-        this.body.velocity.copy(this.noseCone.body.velocity)
     }
 
+    //max y speed for going to y target
     setMaxSpeed(numValue) {
         console.log(`setting max speed to ${numValue}`)
         this.maxSpeed = numValue
     }
 
+    //max y accel for going to y target
     setAcceleration(numValue) {
         console.log(`setting acceleration to ${numValue}`)
         this.acceleration = numValue
     }
 
+    //sets the y value the ship tries to go to
     setTargetY(yValue) {
         console.log(`setting target y to ${yValue}`)
         this.targetY = yValue
     }
 
+    //use this instead of directly scaling to keep the scale of the nose cone right
     shipScale(number) {
         this.setScale(number)
         this.noseCone.setScale(number)
+    }
+
+    falter(stun) {
+        //console.log(`falter: add ${stun} stun`)
+        this.falterTimer.paused = false
+        let thisStun = -stun * 333
+        this.falterTimer.elapsed = (this.falterTimer.elapsed < thisStun) ? this.falterTimer.elapsed: thisStun;
+    }
+
+    doneFaltering() {
+        console.log('done faltering')
+        //console.log(this.falterTimer)
+        //console.log(this)
+        this.falterTimer.paused = true
+        this.falterTimer.hasDispatched = false
     }
 
     //thinking

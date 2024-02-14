@@ -37,9 +37,8 @@ class Menu extends Phaser.Scene {
             key: 'thrust',
             repeat: -1,
             frames: this.anims.generateFrameNumbers('spaceship', {
-                start: 7,
-                end: 9,
-                first: 6
+                start: 6,
+                end: 9
             }),
             frameRate: 10
         })
@@ -49,8 +48,18 @@ class Menu extends Phaser.Scene {
             repeat: 0,
             frames: this.anims.generateFrameNumbers('spaceship', {
                 start: 0,
-                end: 5,
-                first: 0
+                end: 1
+            }),
+            frameRate: 10
+        })
+        
+        
+        this.anims.create({
+            key: 'recover',
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('spaceship', {
+                start: 2,
+                end: 5
             }),
             frameRate: 10
         })
