@@ -14,6 +14,8 @@ class Menu extends Phaser.Scene {
                 this.load.image(`asteroid${astSize}-${astVar}`, `asteroid${astSize}-${astVar}.png`)
             }
         }
+        //load sounds
+        //this.load.audio('closeDrone', 'close.wav')
 
         this.load.image('star', 'star.png')
 

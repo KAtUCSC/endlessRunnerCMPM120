@@ -102,6 +102,8 @@ class Play extends Phaser.Scene {
         if(this.deadScreen){
             this.handleRoundEnd()
         }
+
+        this.closeDroneControl()
     }
 
     handleRoundEnd() {
@@ -131,6 +133,7 @@ class Play extends Phaser.Scene {
         this.creditsText = this.add.text(game.config.width/2, game.config.height/2 - 30, 'Credits:', menuText).setOrigin(0.5)
         this.creditsText = this.add.text(game.config.width/2, game.config.height/2 + 0, 'Art and Code: Kira Way', menuText).setOrigin(0.5)
         this.creditsText = this.add.text(game.config.width/2, game.config.height/2 + 30, 'Teaching: Nathan Altice', menuText).setOrigin(0.5)
+        this.creditsText = this.add.text(game.config.width/2, game.config.height/2 + 90, 'Press [R] to Restart', menuText).setOrigin(0.5)
 
 
     }
