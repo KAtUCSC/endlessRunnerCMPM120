@@ -141,6 +141,7 @@ class Play extends Phaser.Scene {
     handleRoundEnd() {
         if(Phaser.Input.Keyboard.JustDown(keyRESET)) {
             //if died, press r to reset
+            this.droneSound.stop()
             this.scene.restart()
             //this.scene.start('menuScene')
         }
