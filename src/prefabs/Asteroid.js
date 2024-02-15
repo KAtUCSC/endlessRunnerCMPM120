@@ -11,7 +11,7 @@ class Asteroid extends Phaser.Physics.Arcade.Sprite {
         let astVar = Phaser.Math.Between(1, 3)
         let texture = `asteroid${astSize}-${astVar}`
         //console.log(texture)
-        super(scene, x, -32, texture);
+        super(scene, x, -48, texture);
 
         //add object to existing scene
         scene.add.existing(this);
