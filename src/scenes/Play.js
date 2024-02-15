@@ -18,6 +18,34 @@ class Play extends Phaser.Scene {
         //bg
         this.background = this.add.sprite(0, 0, 'blackhole').setOrigin(0).setScale(2)
         this.background.play('idle')
+        
+        //particles: adapted from Professor Altice's work
+        let starLine = new Phaser.Geom.Line(-game.config.width, -20, game.config.width*2, -20)
+        // set up particle emitter  
+        this.lineEmitter = this.add.particles(0, 0, 'star', {
+            gravityY: 20000,
+            maxVelocityY: 2000,
+            lifespan: 500,
+            alpha: {
+                start: 1,
+                end: 0
+            },
+            //tint: [ 0xffff00, 0xff0000, 0x00ff00, 0x00ffff, 0x0000ff ],
+            emitZone: { 
+                type: 'random', 
+                source: starLine, 
+                quantity: 1000
+            },
+            blendMode: 'ADD'
+        }).setParticleScale(2)
+
+        //suck those particles up
+        this.particleWell = this.lineEmitter.createGravityWell({
+            x: game.config.width/2,
+            y: game.config.height + 100,
+            power: 300,
+            epsilon: 150
+        })
 
         //ship
         this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*4/8, 'spaceship')

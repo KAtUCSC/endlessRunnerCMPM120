@@ -15,6 +15,8 @@ class Menu extends Phaser.Scene {
             }
         }
 
+        this.load.image('star', 'star.png')
+
         this.load.spritesheet('spaceship', 'spaceship.png', {
             frameWidth: 16,
             frameHeight: 32,
@@ -80,6 +82,34 @@ class Menu extends Phaser.Scene {
         this.background = this.add.sprite(0, 0, 'blackhole').setOrigin(0).setScale(2)
         this.moveMe = this.physics.add.sprite(0, game.config.height*3/8, 'blackhole').setOrigin(0).setScale(2).setImmovable(true)
         this.moveMe.play('idle')
+        
+        //particles: adapted from Professor Altice's work
+        let starLine = new Phaser.Geom.Line(-game.config.width, -20, game.config.width*2, -20)
+        // set up particle emitter  
+        this.lineEmitter = this.add.particles(0, 0, 'star', {
+            gravityY: 20000,
+            maxVelocityY: 2000,
+            lifespan: 500,
+            alpha: {
+                start: 1,
+                end: 0
+            },
+            //tint: [ 0xffff00, 0xff0000, 0x00ff00, 0x00ffff, 0x0000ff ],
+            emitZone: { 
+                type: 'random', 
+                source: starLine, 
+                quantity: 1000
+            },
+            blendMode: 'ADD'
+        }).setParticleScale(2)
+
+        //suck those particles up
+        this.particleWell = this.lineEmitter.createGravityWell({
+            x: game.config.width/2,
+            y: game.config.height + 100 + game.config.height*3/8,
+            power: 300,
+            epsilon: 150
+        })
 
         //menu text
         let menuText = {
@@ -124,7 +154,9 @@ class Menu extends Phaser.Scene {
             
             //move black hole
             //console.log((-this.startCall.getProgress()+1)**3)
-            this.moveMe.y = Math.min(game.config.height*3/8, game.config.height*3/8 * (-this.startCall.getProgress()+1)**3)
+            let moveDist = Math.min(game.config.height*3/8, game.config.height*3/8 * (-this.startCall.getProgress()+1)**3)
+            this.moveMe.y = moveDist
+            this.particleWell.y = game.config.height + 100 + moveDist
 
             //fade text
             this.topText.alpha = 1-2*this.startCall.getProgress()
