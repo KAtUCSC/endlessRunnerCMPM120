@@ -94,6 +94,26 @@ class Play extends Phaser.Scene {
         //start asteroids
         this.obstacleSpawner = this.time.delayedCall(100, this.startObstacles, null, this)
 
+        //sounds
+        this.hurt1 = this.sound.add('hurt1', { 
+            mute: false,
+            volume: 1,
+            rate: 1,
+            loop: false 
+        })
+        this.hurt2= this.sound.add('hurt2', { 
+            mute: false,
+            volume: 1,
+            rate: 1,
+            loop: false 
+        })
+        this.hurt3 = this.sound.add('hurt3', { 
+            mute: false,
+            volume: 1,
+            rate: 1,
+            loop: false 
+        })
+
         //testing
     }
 
@@ -103,7 +123,7 @@ class Play extends Phaser.Scene {
             this.handleRoundEnd()
         }
 
-        this.closeDroneControl()
+        //this.closeDroneControl()
     }
 
     handleRoundEnd() {
@@ -164,6 +184,7 @@ class Play extends Phaser.Scene {
         //falter
         this.spaceship.falter(asteroid.stun)
         this.spaceship.body.setVelocityY(Math.max(asteroid.size * asteroid.stun * 10, this.spaceship.body.velocity.y))
+        this[`hurt${asteroid.size}`].play()
     }
 
     handleDeath(ship, deathZone) {
