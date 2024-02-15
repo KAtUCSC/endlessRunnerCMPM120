@@ -11,9 +11,11 @@ class Play extends Phaser.Scene {
     init() {}
 
     create() {
+        this.deadScreen = false
         //keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
+        keyRESET = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R)
         
         //bg
         this.background = this.add.sprite(0, 0, 'blackhole').setOrigin(0).setScale(2)
@@ -97,6 +99,40 @@ class Play extends Phaser.Scene {
 
     update() {
         this.spaceship.update(true)
+        if(this.deadScreen){
+            this.handleRoundEnd()
+        }
+    }
+
+    handleRoundEnd() {
+        if(Phaser.Input.Keyboard.JustDown(keyRESET)) {
+            //if died, press r to reset
+            this.scene.restart()
+        }
+        
+    }
+
+    deadScreenText() {
+        let menuText = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            //backgroundColor: '#F3B141',
+            color: '#ffffff',
+            align: 'center',
+            padding: {
+              top: 5,
+              bottom: 5,
+            },
+            fixedWidth: 0
+        }
+
+        this.scoreText.setY(game.config.height/4)
+        this.creditsText = this.add.text(game.config.width/2, game.config.height/2 - 60, 'Thanks for playing!', menuText).setOrigin(0.5)
+        this.creditsText = this.add.text(game.config.width/2, game.config.height/2 - 30, 'Credits:', menuText).setOrigin(0.5)
+        this.creditsText = this.add.text(game.config.width/2, game.config.height/2 + 0, 'Art and Code: Kira Way', menuText).setOrigin(0.5)
+        this.creditsText = this.add.text(game.config.width/2, game.config.height/2 + 30, 'Teaching: Nathan Altice', menuText).setOrigin(0.5)
+
+
     }
 
     updateTimer() {
@@ -132,23 +168,35 @@ class Play extends Phaser.Scene {
         this.physics.world.removeCollider(this.asteroidCollider)
         this.physics.world.removeCollider(this.deathCollider)
         //console.log(this.playTimer)
+        //pause score timer
         this.playTimer.paused = true
+
+        //pause asteroid spawning
+        this.rowSpawner.paused = true
+        this.fastSpawner.paused = true
+        this.showerSpawner.paused = true
+        this.randomSpawner.paused = true
+
+        //mark dead
         this.spaceship.dead = true
+        this.deadScreen = true
+
+        this.deadScreenText()
     }
 
     startObstacles() {
         //start asteroid spawn loops
         this.randAstLoopTime = 3000
-        this.randomAsteroidLoop()
+        this.showerSpawner = this.time.delayedCall(10, this.randomAsteroidLoop, null, this)
 
         this.rowAstLoopTime = 5000
-        this.time.delayedCall(10000, this.rowAsteroidLoop, null, this)
+        this.rowSpawner = this.time.delayedCall(10000, this.rowAsteroidLoop, null, this)
 
         this.fastAstLoopTime = 5000
-        this.time.delayedCall(20000, this.fastAsteroidLoop, null, this)
+        this.fastSpawner = this.time.delayedCall(20000, this.fastAsteroidLoop, null, this)
 
         this.showerAstLoopTime = 10000
-        this.time.delayedCall(30000, this.showerAsteroidLoop, null, this)
+        this.showerSpawner = this.time.delayedCall(30000, this.showerAsteroidLoop, null, this)
 
         //start player slowdown loop
         this.time.delayedCall(30000, this.slowShip, null, this)
@@ -156,8 +204,8 @@ class Play extends Phaser.Scene {
 
     slowShip() {
         this.spaceship.acceleration = Math.max(this.spaceship.acceleration - 1, 5)
-        this.spaceship.maxSpeed = Math.max(this.spaceship.maxSpeed - 10, 50)
-        console.log(this.spaceship.acceleration, this.spaceship.maxSpeed)
+        this.spaceship.maxSpeed = Math.max(this.spaceship.maxSpeed - 20, 50)
+        //console.log(this.spaceship.acceleration, this.spaceship.maxSpeed)
         this.time.delayedCall(10000, this.slowShip, null, this)
     }
 
@@ -195,7 +243,7 @@ class Play extends Phaser.Scene {
         if(this.randAstLoopTime > 250) {
             this.randAstLoopTime -= 250
         }
-        this.time.delayedCall(this.randAstLoopTime, this.randomAsteroidLoop, null, this)
+        this.randomSpawner = this.time.delayedCall(this.randAstLoopTime, this.randomAsteroidLoop, null, this)
     }
 
     rowAsteroidLoop() {
@@ -208,7 +256,7 @@ class Play extends Phaser.Scene {
         if(this.rowAstLoopTime > 1500) {
             this.rowAstLoopTime -= 250
         }
-        this.time.delayedCall(this.rowAstLoopTime, this.rowAsteroidLoop, null, this)
+        this.rowSpawner = this.time.delayedCall(this.rowAstLoopTime, this.rowAsteroidLoop, null, this)
     }
 
     fastAsteroidLoop() {
@@ -220,7 +268,7 @@ class Play extends Phaser.Scene {
         if(this.fastAstLoopTime > 1000) {
             this.fastAstLoopTime -= 250
         }
-        this.time.delayedCall(this.fastAstLoopTime, this.fastAsteroidLoop, null, this)
+        this.fastSpawner = this.time.delayedCall(this.fastAstLoopTime, this.fastAsteroidLoop, null, this)
     }
 
     showerAsteroidLoop() {
@@ -233,6 +281,6 @@ class Play extends Phaser.Scene {
         if(this.showerAstLoopTime > 1500) {
             this.showerAstLoopTime -= 250
         }
-        this.time.delayedCall(this.showerAstLoopTime, this.fastAsteroidLoop, null, this)
+        this.showerSpawner = this.time.delayedCall(this.showerAstLoopTime, this.fastAsteroidLoop, null, this)
     }
 }

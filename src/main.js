@@ -23,4 +23,4 @@ let config = {
 let game = new Phaser.Game(config);
 
 //define keys
-let keyLEFT, keyRIGHT
+let keyLEFT, keyRIGHT, keyRESET
