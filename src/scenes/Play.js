@@ -85,7 +85,7 @@ class Play extends Phaser.Scene {
         //boost asteroid away to avoid multi hits
         //get if the asteroid is on the left or right of the thing it hit, redirect it that way and give it a boost
         let bounceDir = (asteroid.x > shipPart.x) ? 1 : -1;
-        asteroid.body.setVelocityX(bounceDir * (Math.abs(asteroid.body.velocity.x) + 50))
+        asteroid.body.setVelocityX(bounceDir * (Math.abs(asteroid.body.velocity.x) + 100))
         //change velocity to down for funsies
         asteroid.body.setVelocityY(Math.abs(asteroid.body.velocity.y))
 
@@ -107,21 +107,33 @@ class Play extends Phaser.Scene {
     }
 
     startObstacles() {
+        //start asteroid spawn loops
         this.randAstLoopTime = 3000
         this.randomAsteroidLoop()
+
         this.rowAstLoopTime = 5000
         this.time.delayedCall(10000, this.rowAsteroidLoop, null, this)
+
         this.fastAstLoopTime = 5000
         this.time.delayedCall(20000, this.fastAsteroidLoop, null, this)
+
         this.showerAstLoopTime = 10000
         this.time.delayedCall(30000, this.showerAsteroidLoop, null, this)
+
+        //start player slowdown loop
+        this.time.delayedCall(30000, this.slowShip, null, this)
     }
 
-    //add asteroid to asteroid group
+    slowShip() {
+        this.spaceship.acceleration = Math.max(this.spaceship.acceleration - 1, 5)
+        this.spaceship.maxSpeed = Math.max(this.spaceship.maxSpeed - 10, 50)
+        console.log(this.spaceship.acceleration, this.spaceship.maxSpeed)
+        this.time.delayedCall(10000, this.slowShip, null, this)
+    }
+
     addAsteroidRandom(astSize, stun, initialVelocityY) {
         let asteroid = new Asteroid(this, Phaser.Math.Between(-32, game.config.width + 32), astSize, stun, initialVelocityY, Phaser.Math.Between(-20, 20)).setScale(2)
         this.asteroidGroup.add(asteroid)
-        //console.log(this)
     }
 
     addAsteroidRow(count, astSize, stun, initialVelocityY) {

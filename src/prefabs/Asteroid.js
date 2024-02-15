@@ -26,9 +26,15 @@ class Asteroid extends Phaser.Physics.Arcade.Sprite {
 
         this.body.setAccelerationY(800)
         this.body.setAccelerationX((game.config.width/2 - this.x) / 3)
+
+        //visuals
+        this.setAngle(Phaser.Math.Between(0, 360))
+        this.spinSpeed = Phaser.Math.Between(-3, 3)
     }
 
     update(){
+        this.setAngle(this.angle + this.spinSpeed)
+
         this.setScale(2*Math.min(1, 6 * (game.config.height - this.y) / game.config.height))
         this.setAlpha(Math.min(1, 6 * (game.config.height - this.y) / game.config.height))
         if(this.y > game.config.height + this.height) {
