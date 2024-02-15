@@ -145,6 +145,7 @@ class Play extends Phaser.Scene {
     }
 
     randomAsteroidLoop() {
+        //console.log('random')
         this.time.delayedCall(Phaser.Math.Between(0, this.randAstLoopTime), () => {
             let asteroidSize = Phaser.Math.Between(1, 3)
             this.addAsteroidRandom(asteroidSize, asteroidSize, 100)
@@ -156,6 +157,7 @@ class Play extends Phaser.Scene {
     }
 
     rowAsteroidLoop() {
+        //console.log('row')
         this.time.delayedCall(Phaser.Math.Between(0, this.rowAstLoopTime), () => {
             let asteroidSize = Phaser.Math.Between(1, 3)
             let asteroidCount = 4 - asteroidSize
@@ -168,23 +170,25 @@ class Play extends Phaser.Scene {
     }
 
     fastAsteroidLoop() {
+        //console.log('fast')
         this.time.delayedCall(Phaser.Math.Between(0, this.fastAstLoopTime), () => {
-            let asteroidSize = 1 //Phaser.Math.Between(1, 2)
-            this.addAsteroidRandom(asteroidSize, asteroidSize * 2, 800)
+            let asteroidSize = Phaser.Math.Between(1, 2)
+            this.addAsteroidRandom(asteroidSize, asteroidSize + 1, 800)
         })
-        if(this.fastAstLoopTime > 1500) {
+        if(this.fastAstLoopTime > 1000) {
             this.fastAstLoopTime -= 250
         }
         this.time.delayedCall(this.fastAstLoopTime, this.fastAsteroidLoop, null, this)
     }
 
     showerAsteroidLoop() {
+        //console.log('shower')
         this.time.delayedCall(Phaser.Math.Between(0, this.showerAstLoopTime), () => {
             let asteroidSize = Phaser.Math.Between(1, 1)
             let asteroidCount = Phaser.Math.Between(4, 8)
             this.addAsteroidShower(asteroidCount, asteroidSize, asteroidSize, 300)
         })
-        if(this.showerAstLoopTime > 3000) {
+        if(this.showerAstLoopTime > 1500) {
             this.showerAstLoopTime -= 250
         }
         this.time.delayedCall(this.showerAstLoopTime, this.fastAsteroidLoop, null, this)
