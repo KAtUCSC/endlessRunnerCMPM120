@@ -15,7 +15,7 @@ class Menu extends Phaser.Scene {
             }
         }
         //load sounds
-        //this.load.audio('closeDrone', 'close.wav')
+        this.load.audio('closeDrone', 'close.wav')
         this.load.audio('hurt1', 'hitHurt1.wav')
         this.load.audio('hurt2', 'hitHurt2.wav')
         this.load.audio('hurt3', 'hitHurt3.wav')

@@ -113,6 +113,10 @@ class Play extends Phaser.Scene {
             rate: 1,
             loop: false 
         })
+        this.droneSound = this.sound.add('closeDrone', {
+            loop: true 
+        })
+        this.droneSound.play()
 
         //testing
     }
@@ -123,7 +127,15 @@ class Play extends Phaser.Scene {
             this.handleRoundEnd()
         }
 
-        //this.closeDroneControl()
+        this.closeDroneControl()
+    }
+
+    closeDroneControl() {
+        let upperBound = game.config.height/2
+        let lowerBound = game.config.height*3/4
+        let soundScale = Math.min(1, (this.spaceship.y - upperBound)*1/(lowerBound - upperBound))
+        this.droneSound.setVolume(soundScale)
+        //console.log(soundScale)
     }
 
     handleRoundEnd() {
