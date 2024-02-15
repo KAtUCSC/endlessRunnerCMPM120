@@ -28,8 +28,11 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         //physics stuff
         this.bounceFactor = 0.4
         this.bounceFactorY = 0.0
-        this.body.setCollideWorldBounds(true, 0.7, 0.7)
+        this.body.setCollideWorldBounds(true, 0.7, 0)
         this.body.setSize(this.width/3, this.height/2).setOffset(this.width/3,this.height/8).setBounce(this.bounceFactor, this.bounceFactorY)
+
+        //death
+        this.dead = false
         
         /*
         adapted from samme from the phaser form's work while answering someone's multi body question
@@ -37,7 +40,7 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         */
         //nose cone hitbox
         this.noseCone = scene.physics.add.sprite(this.x, this.y, texture)
-        this.noseCone.body.setCollideWorldBounds(true, 0.7, 0.7)
+        this.noseCone.body.setCollideWorldBounds(true, 0.7, 0)
         this.noseCone.body.setCircle(this.width/6, this.width/3, 0).setBounce(this.bounceFactor, this.bounceFactorY)
         this.noseCone.setAlpha(0)
 
@@ -52,6 +55,14 @@ class Spaceship extends Phaser.Physics.Arcade.Sprite {
         //either faltering or going
         //if faltering, flash thruster and fall backwards
         //else, go to target y
+        if(this.dead) {
+            this.shipScale(2*Math.min(1, 8 * (game.config.height - this.y) / game.config.height))
+            this.setAlpha(Math.min(1, 8 * (game.config.height - this.y) / game.config.height))
+            this.noseCone.body.velocity.copy(this.body.velocity)
+            this.setAccelerationY(this.gravPull * 3)
+            //console.log(this.body.velocity.y)
+            return
+        }
         if(this.falterTimer.paused == false) {
             //console.log('FALTERING', this.falterTimer.elapsed, this.falterTimer.delay)
             if(this.falterTimer.elapsed >= -400) {

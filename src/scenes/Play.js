@@ -62,7 +62,7 @@ class Play extends Phaser.Scene {
         this.deathCollider = this.physics.add.overlap(this.spaceship, this.deathZone, this.handleDeath, null, this)
 
         //start asteroids
-        this.time.delayedCall(100, this.startObstacles, null, this)
+        this.obstacleSpawner = this.time.delayedCall(100, this.startObstacles, null, this)
 
         //testing
     }
@@ -102,8 +102,10 @@ class Play extends Phaser.Scene {
     handleDeath(ship, deathZone) {
         console.log('dead')
         this.physics.world.removeCollider(this.asteroidCollider)
+        this.physics.world.removeCollider(this.deathCollider)
         //console.log(this.playTimer)
         this.playTimer.paused = true
+        this.spaceship.dead = true
     }
 
     startObstacles() {
@@ -150,7 +152,7 @@ class Play extends Phaser.Scene {
         let spawnX = Phaser.Math.Between(0, game.config.width)
         for(let i = 0; i < count; i++) {
             this.time.delayedCall(i*100, () => {
-                let asteroid = new Asteroid (this, spawnX, astSize, stun, initialVelocityY, Phaser.Math.Between(-20, 20)).setScale(2)
+                let asteroid = new Asteroid (this, spawnX + astSize * Phaser.Math.Between(-16, 16), astSize, stun, initialVelocityY, Phaser.Math.Between(-20, 20)).setScale(2)
                 this.asteroidGroup.add(asteroid)
             }, null, this)
         }
@@ -196,8 +198,8 @@ class Play extends Phaser.Scene {
     showerAsteroidLoop() {
         //console.log('shower')
         this.time.delayedCall(Phaser.Math.Between(0, this.showerAstLoopTime), () => {
-            let asteroidSize = Phaser.Math.Between(1, 1)
-            let asteroidCount = Phaser.Math.Between(4, 8)
+            let asteroidSize = Phaser.Math.Between(1, 2)
+            let asteroidCount = Phaser.Math.Between(6, 10) - 2 * asteroidSize
             this.addAsteroidShower(asteroidCount, asteroidSize, asteroidSize, 300)
         })
         if(this.showerAstLoopTime > 1500) {

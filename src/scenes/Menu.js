@@ -84,7 +84,7 @@ class Menu extends Phaser.Scene {
         //menu text
         let menuText = {
             fontFamily: 'Courier',
-            fontSize: '28px',
+            fontSize: '27px',
             //backgroundColor: '#F3B141',
             color: '#ffffff',
             align: 'center',
@@ -95,7 +95,7 @@ class Menu extends Phaser.Scene {
             fixedWidth: 0            
         }
         this.topText = this.add.text(game.config.width/2, game.config.height/2-90, 'GRAVITY WELL IMMINENT', menuText).setOrigin(0.5)
-        this.bottomText = this.add.text(game.config.width/2, game.config.height/2-60, 'PRESS ←→ TO BEGIN NAVIGATION', menuText).setOrigin(0.5)
+        this.bottomText = this.add.text(game.config.width/2, game.config.height/2-60, 'PRESS ← → TO BEGIN NAVIGATION', menuText).setOrigin(0.5)
 
         //spaceship
         this.spaceship = new Spaceship(this, game.config.width/2, game.config.height*7/8, 'spaceship')
