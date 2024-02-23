@@ -1,7 +1,9 @@
 /*
 Name: Kira Way
 Game Title: Gravity Well
-Creative Tilt: working on it :)
+Creative Tilt: 
+Technical: I used multiple sprites to create a multi-body hitbox for the spaceship in order to bounce asteroids off of a rounded nosecone while still keeping a largely rectangular hitbox
+Creative: I am rather proud of my asteroid sprites, I spent a great deal of care making them and believe they turned out excellent
 */
 
 let config = {
